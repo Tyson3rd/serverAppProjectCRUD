@@ -9,11 +9,14 @@ const port = 3000;
 //A: access/serve the statis html and style folder.
 //Q: What do you think path.join helps us do?
 //A: this will join all strings into a single path.
+
 app.use(express.static(path.join(__dirname, 'public')))
 
+
+// Add this boilerplate middleware to successfully use req.body
+app.use(express.json())
 //will add routes
 //client > request url > url > http request > http response
-
 
 //will add routes
 app.get('/item', async (req, res) => {
@@ -51,6 +54,29 @@ app.get('/menu/:id', async (req, res) => {
 // });
 //Q: What will our server be doing?
 //A: start server listing on port:3000, and displays the clog message
+
+// Add new restaurant
+app.post('/restaurant', async (req, res) => {
+	let newRestaurant = await Restaurant.create(req.body);
+	res.send('Created!')
+})
+
+// Delete a restaurant
+
+app.delete('/restaurant/:id', async (req, res) => {
+	await Restaurant.destroy({
+		where : {id : req.params.id} // Destory a restaurant where this object matches
+	})
+	res.send("Deleted!!")
+})
+
+// Update a restaurant
+app.put("/restaurant/:id", async (req, res) => {
+	let updated = await Restaurant.update(req.body, {
+		where : {id : req.params.id} // Update a restaurant where the id matches, based on req.body
+	})
+	res.send("Updated!!")
+})
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
 });
